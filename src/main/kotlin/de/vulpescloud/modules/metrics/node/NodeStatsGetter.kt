@@ -16,10 +16,10 @@ class NodeStatsGetter : Scheduler() {
         while (true) {
             val systemLoadAverage = osMXBean.systemLoadAverage
             val availableProcessors = osMXBean.availableProcessors
-            val totalPhysicalMemorySize = osMXBean.totalMemorySize
-            val freePhysicalMemorySize = osMXBean.freeMemorySize
-            val totalSwapSpaceSize = osMXBean.totalSwapSpaceSize
-            val freeSwapSpaceSize = osMXBean.freeSwapSpaceSize
+            val totalPhysicalMemorySize = osMXBean.totalMemorySize / (1024 * 1024)
+            val freePhysicalMemorySize = osMXBean.freeMemorySize / (1024 * 1024)
+            val totalSwapSpaceSize = osMXBean.totalSwapSpaceSize / (1024 * 1024)
+            val freeSwapSpaceSize = osMXBean.freeSwapSpaceSize / (1024 * 1024)
             val cpuLoad = osMXBean.cpuLoad
             val processCpuLoad = osMXBean.processCpuLoad
             val processCpuTime = osMXBean.processCpuTime
@@ -30,10 +30,10 @@ class NodeStatsGetter : Scheduler() {
 
             logger.info("System Load Average: $systemLoadAverage")
             logger.info("Available Processors: $availableProcessors")
-            logger.info("Total Physical Memory Size: $totalPhysicalMemorySize")
-            logger.info("Free Physical Memory Size: $freePhysicalMemorySize")
-            logger.info("Total Swap Space Size: $totalSwapSpaceSize")
-            logger.info("Free Swap Space Size: $freeSwapSpaceSize")
+            logger.info("Total Physical Memory Size: $totalPhysicalMemorySize mb")
+            logger.info("Free Physical Memory Size: $freePhysicalMemorySize mb")
+            logger.info("Total Swap Space Size: $totalSwapSpaceSize mb")
+            logger.info("Free Swap Space Size: $freeSwapSpaceSize mb")
             logger.info("CPU Load: $cpuLoad")
             logger.info("Process CPU Load: $processCpuLoad")
             logger.info("Process CPU Time: $processCpuTime")
@@ -42,7 +42,7 @@ class NodeStatsGetter : Scheduler() {
             logger.info("Version: $version")
             logger.info("Object Name: $objectName")
 
-            delay(5000)
+            delay(15000)
         }
     }
 }
