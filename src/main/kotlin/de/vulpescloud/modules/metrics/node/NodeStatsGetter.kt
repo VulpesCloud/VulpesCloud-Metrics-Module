@@ -1,7 +1,10 @@
 package de.vulpescloud.modules.metrics.node
 
+import com.influxdb.client.write.Point
 import com.sun.management.OperatingSystemMXBean
+import de.vulpescloud.modules.metrics.common.MetricsUtil
 import de.vulpescloud.node.Scheduler
+import de.vulpescloud.node.VulpesNode.clusterProvider
 import java.lang.management.ManagementFactory
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -16,31 +19,51 @@ class NodeStatsGetter : Scheduler() {
         while (true) {
             val systemLoadAverage = osMXBean.systemLoadAverage
             val availableProcessors = osMXBean.availableProcessors
-            val totalPhysicalMemorySize = osMXBean.totalMemorySize / (1024 * 1024)
-            val freePhysicalMemorySize = osMXBean.freeMemorySize / (1024 * 1024)
-            val totalSwapSpaceSize = osMXBean.totalSwapSpaceSize / (1024 * 1024)
-            val freeSwapSpaceSize = osMXBean.freeSwapSpaceSize / (1024 * 1024)
+            val totalSystemMemory = osMXBean.totalMemorySize / (1024 * 1024)
+            val freeSystemMemory = osMXBean.freeMemorySize / (1024 * 1024)
+            val usedSystemMemory = totalSystemMemory - freeSystemMemory
+
+            val totalSwapSpace = osMXBean.totalSwapSpaceSize / (1024 * 1024)
+            val freeSwapSpace = osMXBean.freeSwapSpaceSize / (1024 * 1024)
+            val usedSwapSpace = totalSwapSpace - freeSwapSpace
+
             val cpuLoad = osMXBean.cpuLoad
             val processCpuLoad = osMXBean.processCpuLoad
             val processCpuTime = osMXBean.processCpuTime
+
             val arch = osMXBean.arch
             val name = osMXBean.name
             val version = osMXBean.version
-            val objectName = osMXBean.objectName
 
-            logger.info("System Load Average: $systemLoadAverage")
-            logger.info("Available Processors: $availableProcessors")
-            logger.info("Total Physical Memory Size: $totalPhysicalMemorySize mb")
-            logger.info("Free Physical Memory Size: $freePhysicalMemorySize mb")
-            logger.info("Total Swap Space Size: $totalSwapSpaceSize mb")
-            logger.info("Free Swap Space Size: $freeSwapSpaceSize mb")
-            logger.info("CPU Load: $cpuLoad")
-            logger.info("Process CPU Load: $processCpuLoad")
-            logger.info("Process CPU Time: $processCpuTime")
-            logger.info("Arch: $arch")
-            logger.info("Name: $name")
-            logger.info("Version: $version")
-            logger.info("Object Name: $objectName")
+            logger.info("")
+            logger.info("Writing New Point with data:")
+            logger.info("")
+
+
+            val point = Point("node.systemStats")
+            point.addTag("node", clusterProvider.localNode().name)
+            point.apply {
+                addField("systemLoadAverage", systemLoadAverage)
+                addField("availableProcessors", availableProcessors)
+
+                addField("totalSystemMemory", totalSystemMemory)
+                addField("freeSystemMemory", freeSystemMemory)
+                addField("usedSystemMemory", usedSystemMemory)
+
+                addField("totalSwapSpace", totalSwapSpace)
+                addField("freeSwapSpace", freeSwapSpace)
+                addField("usedSwapSpace", usedSwapSpace)
+
+                addField("cpuLoad", cpuLoad)
+                addField("processCpuLoad", processCpuLoad)
+                addField("processCpuTime", processCpuTime)
+
+                addField("arch", arch)
+                addField("name", name)
+                addField("version", version)
+            }
+
+            MetricsUtil.writePoint(point)
 
             delay(15000)
         }
