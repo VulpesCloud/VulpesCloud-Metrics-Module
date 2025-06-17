@@ -16,14 +16,21 @@ object MetricsAPI {
      *
      * @param from Startzeitpunkt
      * @param to Endzeitpunkt
+     * @param nodeName Optional: Name des spezifischen Nodes
      * @return Liste von NodeStatsModel für den angegebenen Zeitraum
      */
-    fun getNodeStatsForTimespan(from: Instant, to: Instant): List<NodeStatsModel> {
+    fun getNodeStatsForTimespan(
+        from: Instant,
+        to: Instant,
+        nodeName: String? = null,
+    ): List<NodeStatsModel> {
+        val nodeFilter = nodeName?.let { """ |> filter(fn: (r) => r["node"] == "$it")""" } ?: ""
         val flux =
             """
             from(bucket: "$bucket")
                 |> range(start: $from, stop: $to)
                 |> filter(fn: (r) => r["_measurement"] == "node.systemStats")
+                $nodeFilter
         """
                 .trimIndent()
 
@@ -39,14 +46,17 @@ object MetricsAPI {
     /**
      * Gibt die aktuellsten NodeStats zurück
      *
+     * @param nodeName Optional: Name des spezifischen Nodes
      * @return Das neueste NodeStatsModel oder null wenn keine Daten verfügbar sind
      */
-    fun getLatestNodeStats(): NodeStatsModel? {
+    fun getLatestNodeStats(nodeName: String? = null): NodeStatsModel? {
+        val nodeFilter = nodeName?.let { """ |> filter(fn: (r) => r["node"] == "$it")""" } ?: ""
         val flux =
             """
             from(bucket: "$bucket")
                 |> range(start: -1m)
                 |> filter(fn: (r) => r["_measurement"] == "node.systemStats")
+                $nodeFilter
                 |> last()
         """
                 .trimIndent()
