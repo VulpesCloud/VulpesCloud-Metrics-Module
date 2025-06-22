@@ -1,0 +1,9 @@
+{
+  "id": "vulpescloud-metrics-module",
+  "name": "VulpesCloud-Metrics-Module",
+  "version": "1.0.0",
+  "authors": [
+    "TheCGuy"
+  ],
+  "main": "de.vulpescloud.modules.metrics.velocity.VelocityEntrypoint"
+}

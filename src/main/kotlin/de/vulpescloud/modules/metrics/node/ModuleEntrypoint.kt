@@ -6,6 +6,7 @@ import de.vulpescloud.api.virtualconfig.VirtualConfig
 import de.vulpescloud.api.virtualconfig.VirtualConfigProvider
 import de.vulpescloud.modules.metrics.common.MetricsUtil
 
+@Suppress("unused")
 class ModuleEntrypoint : VulpesModule {
 
     private lateinit var nodeStatsGetter: NodeStatsGetter

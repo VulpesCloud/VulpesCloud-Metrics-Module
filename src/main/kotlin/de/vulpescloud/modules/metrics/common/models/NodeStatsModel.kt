@@ -15,4 +15,5 @@ data class NodeStatsModel(
     val arch: String,
     val name: String,
     val version: String,
+    val timestamp: Long?,
 )

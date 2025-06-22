@@ -11,6 +11,7 @@ version = "1.0.0"
 repositories {
     mavenCentral()
     maven("https://repo.vulpescloud.de/snapshots/")
+    maven("https://repo.papermc.io/repository/maven-public/")
 }
 
 dependencies {
@@ -22,6 +23,9 @@ dependencies {
     compileOnly("org.jetbrains.exposed:exposed-jdbc:1.0.0-beta-2")
     compileOnly("io.insert-koin:koin-core:4.0.3")
     implementation("com.influxdb:influxdb-client-java:7.3.0")
+
+    compileOnly("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
+    annotationProcessor("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
 }
 
 kotlin { jvmToolchain(21) }
