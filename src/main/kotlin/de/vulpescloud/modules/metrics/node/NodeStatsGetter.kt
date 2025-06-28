@@ -5,15 +5,12 @@ import com.sun.management.OperatingSystemMXBean
 import de.vulpescloud.modules.metrics.common.MetricsUtil
 import de.vulpescloud.node.Scheduler
 import de.vulpescloud.node.VulpesNode.clusterProvider
-import java.lang.management.ManagementFactory
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.slf4j.LoggerFactory
+import java.lang.management.ManagementFactory
 
 class NodeStatsGetter : Scheduler() {
     private val osMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
-
-    private val logger = LoggerFactory.getLogger("TempNodeStatsGetterLoggerVeryNotCoolNoJokeniug")
 
     override fun run() = launch {
         while (true) {
@@ -34,11 +31,6 @@ class NodeStatsGetter : Scheduler() {
             val arch = osMXBean.arch
             val name = osMXBean.name
             val version = osMXBean.version
-
-            logger.info("")
-            logger.info("Writing New Point with data:")
-            logger.info("")
-
 
             val point = Point("node.systemStats")
             point.addTag("node", clusterProvider.localNode().name)
